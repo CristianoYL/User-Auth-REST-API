@@ -57,3 +57,13 @@ pipenv run python app.py
 ```
 
 The second approach is actually doing the same thing as the first one, but it's more convenient.
+
+***troubleshoot*** If you have issue installing `marshmallow`, use the following command to install `marshmallow3`:
+
+```
+pipenv run pip install -U marshmallow --pre
+``` 
+
+*`marshmallow3` is currently in beta version, but we choose to stick to it since it introduces some major changes. Using `marshmallow2` will result in a lot of refactoring.*
+
+ 

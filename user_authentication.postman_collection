@@ -1,0 +1,1084 @@
+{
+	"info": {
+		"_postman_id": "4197e106-29d5-4fbe-9c41-9f58424c6032",
+		"name": "User Authentication",
+		"description": "This is the API documentation of the *User Authentication Template App*. It includes most of the necessary features such as register, login, delete, update and token refresh functionalities for token based user authentication.\n\nSample requests and responses are included below.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "register a new user",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"li.yin\",\n\t\"password\": \"1234\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}/register",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"register"
+					]
+				}
+			},
+			"response": [
+				{
+					"id": "39a41992-2309-483d-aadf-25a3c0a57407",
+					"name": "register a duplicate username",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"disabled": false
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"username\": \"li.yin\",\n\t\"password\": \"1234\"\n}"
+						},
+						"url": {
+							"raw": "{{local_flask}}/register",
+							"host": [
+								"{{local_flask}}"
+							],
+							"path": [
+								"register"
+							]
+						}
+					},
+					"status": "BAD REQUEST",
+					"code": 400,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Length",
+							"value": "63",
+							"name": "Content-Length",
+							"description": "The length of the response body in octets (8-bit bytes)"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"name": "Content-Type",
+							"description": "The mime type of this content"
+						},
+						{
+							"key": "Date",
+							"value": "Thu, 12 Jul 2018 17:29:29 GMT",
+							"name": "Date",
+							"description": "The date and time that the message was sent"
+						},
+						{
+							"key": "Server",
+							"value": "Werkzeug/0.14.1 Python/3.7.0",
+							"name": "Server",
+							"description": "A name for the server"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"message\": \"A user with that username already exists.\"\n}\n"
+				},
+				{
+					"id": "e5179cef-231c-423c-aca0-5fd7aa8e3005",
+					"name": "register a new user",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"disabled": false
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"username\": \"li.yin\",\n\t\"password\": \"1234\"\n}"
+						},
+						"url": {
+							"raw": "{{local_flask}}/register",
+							"host": [
+								"{{local_flask}}"
+							],
+							"path": [
+								"register"
+							]
+						}
+					},
+					"status": "CREATED",
+					"code": 201,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Length",
+							"value": "48",
+							"name": "Content-Length",
+							"description": "The length of the response body in octets (8-bit bytes)"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"name": "Content-Type",
+							"description": "The mime type of this content"
+						},
+						{
+							"key": "Date",
+							"value": "Thu, 12 Jul 2018 17:29:21 GMT",
+							"name": "Date",
+							"description": "The date and time that the message was sent"
+						},
+						{
+							"key": "Server",
+							"value": "Werkzeug/0.14.1 Python/3.7.0",
+							"name": "Server",
+							"description": "A name for the server"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"message\": \"User created successfully.\"\n}\n"
+				}
+			]
+		},
+		{
+			"name": "login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "22eff198-fb71-4c19-876b-b9b9ecd651fd",
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData = pm.response.json();",
+							"pm.test(\"access_token not empty\", function () {",
+							"    pm.expect(jsonData.access_token).not.eql(undefined);",
+							"});",
+							"",
+							"pm.test(\"refresh token not empty\", function () {",
+							"    pm.expect(jsonData.refresh_token).not.eql(undefined);",
+							"});",
+							"// set access token as environement variable",
+							"if (jsonData.access_token !== undefined) {",
+							"    postman.setEnvironmentVariable(\"access_token\", jsonData.access_token);",
+							"} else {",
+							"    postman.setEnvironmentVariable(\"access_token\", pm.environment.get(\"expired_token\"));",
+							"}",
+							"// set refresh token as environement variable",
+							"if (jsonData.refresh_token !== undefined) {",
+							"    postman.setEnvironmentVariable(\"refresh_token\", jsonData.refresh_token);",
+							"} else {",
+							"    postman.setEnvironmentVariable(\"refresh_token\", pm.environment.get(\"expired_token\"));",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"username\" : \"li.yin\",\n  \"password\" : \"1234\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}/login",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": [
+				{
+					"id": "7735680d-348f-4598-a68b-e7490745d329",
+					"name": "login failed",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"disabled": false
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\" : \"li.yin\",\n  \"password\" : \"123\"\n}"
+						},
+						"url": {
+							"raw": "{{local_flask}}/login",
+							"host": [
+								"{{local_flask}}"
+							],
+							"path": [
+								"login"
+							]
+						}
+					},
+					"status": "UNAUTHORIZED",
+					"code": 401,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Length",
+							"value": "42",
+							"name": "Content-Length",
+							"description": "The length of the response body in octets (8-bit bytes)"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"name": "Content-Type",
+							"description": "The mime type of this content"
+						},
+						{
+							"key": "Date",
+							"value": "Thu, 12 Jul 2018 17:25:27 GMT",
+							"name": "Date",
+							"description": "The date and time that the message was sent"
+						},
+						{
+							"key": "Server",
+							"value": "Werkzeug/0.14.1 Python/3.7.0",
+							"name": "Server",
+							"description": "A name for the server"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"message\": \"Invalid credentials!\"\n}\n"
+				},
+				{
+					"id": "53d6fd01-72dd-4d10-8f03-2cf39d622055",
+					"name": "login successfully",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"disabled": false
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\" : \"li.yin\",\n  \"password\" : \"1234\"\n}"
+						},
+						"url": {
+							"raw": "{{local_flask}}/login",
+							"host": [
+								"{{local_flask}}"
+							],
+							"path": [
+								"login"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Length",
+							"value": "570",
+							"name": "Content-Length",
+							"description": "The length of the response body in octets (8-bit bytes)"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"name": "Content-Type",
+							"description": "The mime type of this content"
+						},
+						{
+							"key": "Date",
+							"value": "Thu, 12 Jul 2018 17:24:53 GMT",
+							"name": "Date",
+							"description": "The date and time that the message was sent"
+						},
+						{
+							"key": "Server",
+							"value": "Werkzeug/0.14.1 Python/3.7.0",
+							"name": "Server",
+							"description": "A name for the server"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"access_token\": \"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE1MzE0MTYyOTMsIm5iZiI6MTUzMTQxNjI5MywianRpIjoiZmM5MDYzOTMtYjg5OC00YTA2LTk3ZDktYjhiMzU5MDc0YzlmIiwiZXhwIjoxNTMxNDE3MTkzLCJpZGVudGl0eSI6MSwiZnJlc2giOnRydWUsInR5cGUiOiJhY2Nlc3MifQ.X_NdZOK5bn892OYYdWxXuDHSqwEhX9Vm3Tc21zvPM6Q\",\n    \"refresh_token\": \"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE1MzE0MTYyOTMsIm5iZiI6MTUzMTQxNjI5MywianRpIjoiZTE2ZWQ2MzQtYTgyOS00MTA2LWEwYTgtYmRlZWU2YzA1ZDEzIiwiZXhwIjoxNTM0MDA4MjkzLCJpZGVudGl0eSI6MSwidHlwZSI6InJlZnJlc2gifQ.CF_aEeML1gngsaEWtQTSzBmXVTDJjqq8urO35228n5c\"\n}\n"
+				}
+			]
+		},
+		{
+			"name": "logout",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "dc763e9b-e6c7-4ff3-9766-637976a5c64b",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url}}/logout",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"logout"
+					]
+				}
+			},
+			"response": [
+				{
+					"id": "11fc79c6-f48a-4755-9cab-8fbbf11a671f",
+					"name": "logout",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"disabled": false
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{local_flask}}/logout",
+							"host": [
+								"{{local_flask}}"
+							],
+							"path": [
+								"logout"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Length",
+							"value": "58",
+							"name": "Content-Length",
+							"description": "The length of the response body in octets (8-bit bytes)"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"name": "Content-Type",
+							"description": "The mime type of this content"
+						},
+						{
+							"key": "Date",
+							"value": "Thu, 12 Jul 2018 17:27:52 GMT",
+							"name": "Date",
+							"description": "The date and time that the message was sent"
+						},
+						{
+							"key": "Server",
+							"value": "Werkzeug/0.14.1 Python/3.7.0",
+							"name": "Server",
+							"description": "A name for the server"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"message\": \"User <id=1> successfully logged out.\"\n}\n"
+				}
+			]
+		},
+		{
+			"name": "refresh token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "f4400860-1e38-4afa-b490-4d7f38980873",
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData = pm.response.json();",
+							"pm.test(\"access_token not empty\", function () {",
+							"    pm.expect(jsonData.access_token).not.eql(undefined);",
+							"});",
+							"// set access token as environement variable",
+							"if (jsonData.access_token !== undefined) {",
+							"    postman.setEnvironmentVariable(\"access_token\", jsonData.access_token);",
+							"} else {",
+							"    postman.setEnvironmentVariable(\"access_token\", pm.environment.get(\"expired_token\"));",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{refresh_token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url}}/refresh",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"refresh"
+					]
+				}
+			},
+			"response": [
+				{
+					"id": "58c33f95-8621-4062-a572-79e6768e5bb6",
+					"name": "refresh access token",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"disabled": false
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{refresh_token}}",
+								"disabled": false
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{local_flask}}/refresh",
+							"host": [
+								"{{local_flask}}"
+							],
+							"path": [
+								"refresh"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Length",
+							"value": "295",
+							"name": "Content-Length",
+							"description": "The length of the response body in octets (8-bit bytes)"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"name": "Content-Type",
+							"description": "The mime type of this content"
+						},
+						{
+							"key": "Date",
+							"value": "Thu, 12 Jul 2018 17:27:21 GMT",
+							"name": "Date",
+							"description": "The date and time that the message was sent"
+						},
+						{
+							"key": "Server",
+							"value": "Werkzeug/0.14.1 Python/3.7.0",
+							"name": "Server",
+							"description": "A name for the server"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"access_token\": \"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE1MzE0MTY0NDEsIm5iZiI6MTUzMTQxNjQ0MSwianRpIjoiMjA1OTJjY2MtNjMzZS00MjRmLTgxYzEtYTYyMTIxNmEzMTE2IiwiZXhwIjoxNTMxNDE3MzQxLCJpZGVudGl0eSI6MSwiZnJlc2giOmZhbHNlLCJ0eXBlIjoiYWNjZXNzIn0.a31qETgkpcHSS6RmsV9wLhFm3jbtlSFmSwlAzDhj5KQ\"\n}\n"
+				}
+			]
+		},
+		{
+			"name": "get user by id",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"jose\",\n\t\"password\": \"1234\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}/user/1",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"user",
+						"1"
+					]
+				}
+			},
+			"response": [
+				{
+					"id": "65f19493-2cb3-401e-8179-60923d63a2f0",
+					"name": "get user by id after logging in",
+					"originalRequest": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"disabled": false
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"username\": \"jose\",\n\t\"password\": \"1234\"\n}"
+						},
+						"url": {
+							"raw": "{{local_flask}}/user/1",
+							"host": [
+								"{{local_flask}}"
+							],
+							"path": [
+								"user",
+								"1"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Length",
+							"value": "66",
+							"name": "Content-Length",
+							"description": "The length of the response body in octets (8-bit bytes)"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"name": "Content-Type",
+							"description": "The mime type of this content"
+						},
+						{
+							"key": "Date",
+							"value": "Thu, 12 Jul 2018 17:26:31 GMT",
+							"name": "Date",
+							"description": "The date and time that the message was sent"
+						},
+						{
+							"key": "Server",
+							"value": "Werkzeug/0.14.1 Python/3.7.0",
+							"name": "Server",
+							"description": "A name for the server"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"id\": 1,\n    \"username\": \"li.yin\",\n    \"password\": \"1234\"\n}\n"
+				},
+				{
+					"id": "e9f6464a-9447-430f-954f-5de338416120",
+					"name": "get user by id as a guest",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"username\": \"jose\",\n\t\"password\": \"1234\"\n}"
+						},
+						"url": {
+							"raw": "{{local_flask}}/user/1",
+							"host": [
+								"{{local_flask}}"
+							],
+							"path": [
+								"user",
+								"1"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Length",
+							"value": "42",
+							"name": "Content-Length",
+							"description": "The length of the response body in octets (8-bit bytes)"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"name": "Content-Type",
+							"description": "The mime type of this content"
+						},
+						{
+							"key": "Date",
+							"value": "Thu, 12 Jul 2018 17:26:51 GMT",
+							"name": "Date",
+							"description": "The date and time that the message was sent"
+						},
+						{
+							"key": "Server",
+							"value": "Werkzeug/0.14.1 Python/3.7.0",
+							"name": "Server",
+							"description": "A name for the server"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"username\": \"li.yin\",\n    \"id\": 1\n}\n"
+				}
+			]
+		},
+		{
+			"name": "delete user by id",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url}}/user/1",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"user",
+						"1"
+					]
+				}
+			},
+			"response": [
+				{
+					"id": "7b5b97a4-d3a3-4df8-8bb7-0bb7c7db8206",
+					"name": "delete non-existing user",
+					"originalRequest": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"disabled": false
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{local_flask}}/user/10",
+							"host": [
+								"{{local_flask}}"
+							],
+							"path": [
+								"user",
+								"10"
+							]
+						}
+					},
+					"status": "NOT FOUND",
+					"code": 404,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Length",
+							"value": "37",
+							"name": "Content-Length",
+							"description": "The length of the response body in octets (8-bit bytes)"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"name": "Content-Type",
+							"description": "The mime type of this content"
+						},
+						{
+							"key": "Date",
+							"value": "Thu, 12 Jul 2018 17:28:49 GMT",
+							"name": "Date",
+							"description": "The date and time that the message was sent"
+						},
+						{
+							"key": "Server",
+							"value": "Werkzeug/0.14.1 Python/3.7.0",
+							"name": "Server",
+							"description": "A name for the server"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"message\": \"User not found.\"\n}\n"
+				},
+				{
+					"id": "30fe092a-b0f5-434e-adb8-498489f34ff4",
+					"name": "delete user by id",
+					"originalRequest": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"disabled": false
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{local_flask}}/user/1",
+							"host": [
+								"{{local_flask}}"
+							],
+							"path": [
+								"user",
+								"1"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Length",
+							"value": "35",
+							"name": "Content-Length",
+							"description": "The length of the response body in octets (8-bit bytes)"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"name": "Content-Type",
+							"description": "The mime type of this content"
+						},
+						{
+							"key": "Date",
+							"value": "Thu, 12 Jul 2018 17:28:39 GMT",
+							"name": "Date",
+							"description": "The date and time that the message was sent"
+						},
+						{
+							"key": "Server",
+							"value": "Werkzeug/0.14.1 Python/3.7.0",
+							"name": "Server",
+							"description": "A name for the server"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"message\": \"User deleted.\"\n}\n"
+				}
+			]
+		},
+		{
+			"name": "change password",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"li.yin\",\n\t\"password\": \"12345\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}/user/update/1",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"user",
+						"update",
+						"1"
+					]
+				}
+			},
+			"response": [
+				{
+					"id": "86590a76-15af-4444-b47c-fafba5c30ed7",
+					"name": "change password with a non-fresh token",
+					"originalRequest": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"disabled": false
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"disabled": false
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"username\": \"li.yin\",\n\t\"password\": \"12345\"\n}"
+						},
+						"url": {
+							"raw": "{{local_flask}}/user/update/1",
+							"host": [
+								"{{local_flask}}"
+							],
+							"path": [
+								"user",
+								"update",
+								"1"
+							]
+						}
+					},
+					"status": "UNAUTHORIZED",
+					"code": 401,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Length",
+							"value": "36",
+							"name": "Content-Length",
+							"description": "The length of the response body in octets (8-bit bytes)"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"name": "Content-Type",
+							"description": "The mime type of this content"
+						},
+						{
+							"key": "Date",
+							"value": "Thu, 12 Jul 2018 17:30:27 GMT",
+							"name": "Date",
+							"description": "The date and time that the message was sent"
+						},
+						{
+							"key": "Server",
+							"value": "Werkzeug/0.14.1 Python/3.7.0",
+							"name": "Server",
+							"description": "A name for the server"
+						}
+					],
+					"cookie": [],
+					"body": "{\n  \"msg\": \"Fresh token required\"\n}\n"
+				},
+				{
+					"id": "ac1cc34e-c66c-435a-8f39-aadfd2941c40",
+					"name": "change to same password",
+					"originalRequest": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"disabled": false
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"disabled": false
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"username\": \"li.yin\",\n\t\"password\": \"12345\"\n}"
+						},
+						"url": {
+							"raw": "{{local_flask}}/user/update/1",
+							"host": [
+								"{{local_flask}}"
+							],
+							"path": [
+								"user",
+								"update",
+								"1"
+							]
+						}
+					},
+					"status": "BAD REQUEST",
+					"code": 400,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Length",
+							"value": "55",
+							"name": "Content-Length",
+							"description": "The length of the response body in octets (8-bit bytes)"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"name": "Content-Type",
+							"description": "The mime type of this content"
+						},
+						{
+							"key": "Date",
+							"value": "Thu, 12 Jul 2018 17:30:07 GMT",
+							"name": "Date",
+							"description": "The date and time that the message was sent"
+						},
+						{
+							"key": "Server",
+							"value": "Werkzeug/0.14.1 Python/3.7.0",
+							"name": "Server",
+							"description": "A name for the server"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"message\": \"You cannot use the same password.\"\n}\n"
+				},
+				{
+					"id": "72e8f35b-4332-4001-896d-a851ce7b7763",
+					"name": "change password",
+					"originalRequest": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"disabled": false
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"disabled": false
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"username\": \"li.yin\",\n\t\"password\": \"12345\"\n}"
+						},
+						"url": {
+							"raw": "{{local_flask}}/user/update/1",
+							"host": [
+								"{{local_flask}}"
+							],
+							"path": [
+								"user",
+								"update",
+								"1"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Length",
+							"value": "44",
+							"name": "Content-Length",
+							"description": "The length of the response body in octets (8-bit bytes)"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"name": "Content-Type",
+							"description": "The mime type of this content"
+						},
+						{
+							"key": "Date",
+							"value": "Thu, 12 Jul 2018 17:29:56 GMT",
+							"name": "Date",
+							"description": "The date and time that the message was sent"
+						},
+						{
+							"key": "Server",
+							"value": "Werkzeug/0.14.1 Python/3.7.0",
+							"name": "Server",
+							"description": "A name for the server"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"message\": \"User password updated.\"\n}\n"
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "1de975a1-7fe7-41a7-a295-62e9682887c6",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "9879433f-4e92-4830-8354-7701f73048da",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "3082285e-39d7-4a46-b8df-c09899112553",
+			"key": "url",
+			"value": "127.0.0.1:5000",
+			"type": "string",
+			"description": ""
+		}
+	]
+}

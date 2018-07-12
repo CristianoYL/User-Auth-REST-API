@@ -103,8 +103,9 @@ class UserUpdate(Resource):
             return {"message": "User not found."}, 400
 
         data = user_schema.load(request.get_json())
-        user.password = data.password
-        user.save_to_db()
+        if not safe_str_cmp(user.password, data.password):
+            user.password = data.password
+            user.save_to_db()
+            return {"message": "User password updated."}, 200
 
-        return {"message": "User password updated."}, 200
-
+        return {"message": "You cannot use the same password."}, 400
