@@ -66,4 +66,6 @@ pipenv run pip install -U marshmallow --pre
 
 *`marshmallow3` is currently in beta version, but we choose to stick to it since it introduces some major changes. Using `marshmallow2` will result in a lot of refactoring.*
 
- 
+# API Documentation
+
+Please refer to: [https://documenter.getpostman.com/view/1798028/RWMBSAfA](https://documenter.getpostman.com/view/1798028/RWMBSAfA)
